@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa Inteligente - Apresentação SESI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --tw-color-primary: #00a3e0;
+        }
+        
+        * {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 200ms;
+        }
+        
+        .slide-container {
+            animation: slideFade 400ms ease forwards;
+        }
+        
+        @keyframes slideFade {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .nav-button {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-button:hover {
+            transform: scale(1.05);
+            background-color: #00a3e0;
+        }
+
+        /* Estilo do Modal */
+        .modal {
+            animation: modalPop 300ms ease forwards;
+        }
+        
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-white font-sans overflow-hidden h-screen w-screen relative">
+
+    <!-- CONTEÚDO CENTRAL -->
+    <div id="slide-content" class="h-screen w-screen flex items-center justify-center p-16 relative z-10"></div>
+
+    <!-- NAVEGAÇÃO FIXA -->
+    <div class="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 bg-slate-900/80 backdrop-blur-md px-8 py-4 rounded-3xl shadow-2xl border border-slate-700 z-50">
+        <button onclick="prevSlide()" 
+                class="nav-button flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-[#00a3e0] text-white rounded-2xl font-medium text-lg shadow-inner">
+            <span class="text-3xl leading-none">←</span>
+            <span>Anterior</span>
+        </button>
+
+        <div class="flex items-center px-8">
+            <span id="current-slide" class="text-4xl font-semibold tabular-nums text-[#00a3e0]">1</span>
+            <span class="text-slate-400 mx-3 text-3xl">/</span>
+            <span id="total-slides" class="text-3xl font-medium text-slate-400">6</span>
+        </div>
+
+        <button onclick="nextSlide()" 
+                class="nav-button flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-[#00a3e0] text-white rounded-2xl font-medium text-lg shadow-inner">
+            <span>Próximo</span>
+            <span class="text-3xl leading-none">→</span>
+        </button>
+
+        <div class="w-48 h-2 bg-slate-700 rounded-3xl overflow-hidden ml-4">
+            <div id="progress-bar" class="h-full bg-[#00a3e0] w-1/6 rounded-3xl"></div>
+        </div>
+    </div>
+
+    <script>
+        // Array de slides
+        const slides = [
+            {
+                // Slide 1 - Título
+                html: `
+                    <div class="text-center max-w-4xl mx-auto slide-container">
+                        <div class="inline-flex items-center gap-3 bg-slate-900 text-[#00a3e0] text-sm font-medium px-6 py-2 rounded-3xl mb-8 border border-slate-700">
+                            <span class="relative flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00a3e0] opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-[#00a3e0]"></span>
+                            </span>
+                            TECNOLOGIA • INOVAÇÃO • FUTURO
+                        </div>
+                        <h1 class="text-7xl font-bold tracking-tighter leading-none mb-6">
+                            CASA<br>INTELIGENTE
+                        </h1>
+                        <p class="text-4xl text-slate-300 font-light tracking-tight mb-12">
+                            Revolucionando o lar com tecnologia e conforto
+                        </p>
+                        <div class="flex flex-col items-center gap-3">
+                            <p class="text-2xl font-medium">Apresentado por: <span class="text-[#00a3e0]">Gustavo, Talice, Matheus Filla, Jackson e Lucas </span></p>
+                            <p class="text-xl text-slate-400">CWB city • Abril 2026</p>
+                        </div>
+                        <div class="mt-20 text-xs uppercase tracking-[3px] text-slate-500 font-medium flex justify-center items-center gap-8">
+                            <div>IoT</div>
+                            <div class="w-px h-3 bg-slate-500"></div>
+                            <div>IA</div>
+                            <div class="w-px h-3 bg-slate-500"></div>
+                            <div>AUTOMAÇÃO</div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                // Slide 2 - O que é
+                html: `
+                    <div class="max-w-5xl mx-auto slide-container">
+                        <h2 class="text-5xl font-semibold text-center mb-12">O que é uma Casa Inteligente?</h2>
+                        <div class="grid grid-cols-12 gap-8 items-center">
+                            <div class="col-span-7">
+                                <p class="text-2xl leading-relaxed text-slate-200 mb-8">
+                                    Uma residência equipada com dispositivos conectados à internet que permitem 
+                                    <span class="text-[#00a3e0] font-medium">automatizar, controlar e monitorar</span> 
+                                    tudo de forma inteligente.
+                                </p>
+                                <div class="space-y-6">
+                                    <div class="flex gap-4">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-[#00a3e0]/10 text-[#00a3e0] rounded-2xl flex items-center justify-center text-3xl">🌐</div>
+                                        <div>
+                                            <p class="font-semibold text-xl">Internet das Coisas (IoT)</p>
+                                            <p class="text-slate-400">Dispositivos que se comunicam entre si</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-4">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-[#00a3e0]/10 text-[#00a3e0] rounded-2xl flex items-center justify-center text-3xl">🧠</div>
+                                        <div>
+                                            <p class="font-semibold text-xl">Inteligência Artificial</p>
+                                            <p class="text-slate-400">Aprende os hábitos da família</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-4">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-[#00a3e0]/10 text-[#00a3e0] rounded-2xl flex items-center justify-center text-3xl">📱</div>
+                                        <div>
+                                            <p class="font-semibold text-xl">Controle por voz e app</p>
+                                            <p class="text-slate-400">Alexa, Google Assistant ou Siri</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-span-5 text-center text-[180px] leading-none opacity-90">🏠<span class="text-[#00a3e0]">💡</span></div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                // Slide 3 - Vantagens
+                html: `
+                    <div class="max-w-5xl mx-auto slide-container">
+                        <h2 class="text-5xl font-semibold text-center mb-12">Principais Vantagens</h2>
+                        <div class="grid grid-cols-2 gap-8">
+                            <div class="bg-slate-900/70 border border-slate-700 rounded-3xl p-8">
+                                <div class="text-[#00a3e0] text-5xl mb-4">🛋️</div>
+                                <h3 class="text-2xl font-semibold mb-3">Conforto e Praticidade</h3>
+                                <p class="text-slate-400">Controle tudo com um comando de voz ou toque no celular</p>
+                            </div>
+                            <div class="bg-slate-900/70 border border-slate-700 rounded-3xl p-8">
+                                <div class="text-[#00a3e0] text-5xl mb-4">⚡</div>
+                                <h3 class="text-2xl font-semibold mb-3">Economia de Energia</h3>
+                                <p class="text-slate-400">Redução de até 30% na conta de luz com automação inteligente</p>
+                            </div>
+                            <div class="bg-slate-900/70 border border-slate-700 rounded-3xl p-8">
+                                <div class="text-[#00a3e0] text-5xl mb-4">🔒</div>
+                                <h3 class="text-2xl font-semibold mb-3">Segurança 24h</h3>
+                                <p class="text-slate-400">Câmeras, alarmes e monitoramento remoto em tempo real</p>
+                            </div>
+                            <div class="bg-slate-900/70 border border-slate-700 rounded-3xl p-8">
+                                <div class="text-[#00a3e0] text-5xl mb-4">♿</div>
+                                <h3 class="text-2xl font-semibold mb-3">Acessibilidade</h3>
+                                <p class="text-slate-400">Ideal para idosos e pessoas com deficiência</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                // Slide 4 - Tecnologias com Pop-ups
+                html: `
+                    <div class="max-w-5xl mx-auto slide-container">
+                        <h2 class="text-5xl font-semibold text-center mb-12">Tecnologias Utilizadas</h2>
+                        <div class="grid grid-cols-4 gap-6">
+                            <div onclick="showTechModal(0)" class="cursor-pointer group text-center bg-slate-900/70 border border-slate-700 rounded-3xl p-8 hover:border-[#00a3e0] hover:scale-105 transition-all">
+                                <div class="text-6xl mb-4 transition-transform group-hover:scale-110">🌐</div>
+                                <p class="font-semibold text-xl">Internet das Coisas</p>
+                                <p class="text-sm text-slate-400 mt-1">IoT</p>
+                            </div>
+                            <div onclick="showTechModal(1)" class="cursor-pointer group text-center bg-slate-900/70 border border-slate-700 rounded-3xl p-8 hover:border-[#00a3e0] hover:scale-105 transition-all">
+                                <div class="text-6xl mb-4 transition-transform group-hover:scale-110">🤖</div>
+                                <p class="font-semibold text-xl">Inteligência Artificial</p>
+                                <p class="text-sm text-slate-400 mt-1">IA</p>
+                            </div>
+                            <div onclick="showTechModal(2)" class="cursor-pointer group text-center bg-slate-900/70 border border-slate-700 rounded-3xl p-8 hover:border-[#00a3e0] hover:scale-105 transition-all">
+                                <div class="text-6xl mb-4 transition-transform group-hover:scale-110">🗣️</div>
+                                <p class="font-semibold text-xl">Assistentes de Voz</p>
+                                <p class="text-sm text-slate-400 mt-1">Alexa • Google • Siri</p>
+                            </div>
+                            <div onclick="showTechModal(3)" class="cursor-pointer group text-center bg-slate-900/70 border border-slate-700 rounded-3xl p-8 hover:border-[#00a3e0] hover:scale-105 transition-all">
+                                <div class="text-6xl mb-4 transition-transform group-hover:scale-110">📡</div>
+                                <p class="font-semibold text-xl">Protocolos</p>
+                                <p class="text-sm text-slate-400 mt-1">Wi-Fi • Zigbee • Z-Wave</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                // Slide 5 - Exemplos
+                html: `
+                    <div class="max-w-5xl mx-auto slide-container">
+                        <h2 class="text-5xl font-semibold text-center mb-12">Exemplos de Dispositivos</h2>
+                        <div class="flex flex-wrap justify-center gap-6">
+                            <div class="bg-slate-900/70 border border-slate-700 rounded-3xl px-8 py-6 text-center w-60">
+                                💡 <span class="block font-semibold text-xl mt-3">Iluminação Inteligente</span>
+                                <span class="text-sm text-slate-400">Philips Hue</span>
+                            </div>
+                            <div class="bg-slate-900/70 border border-slate-700 rounded-3xl px-8 py-6 text-center w-60">
+                                🌡️ <span class="block font-semibold text-xl mt-3">Termostato Inteligente</span>
+                                <span class="text-sm text-slate-400">Google Nest</span>
+                            </div>
+                            <div class="bg-slate-900/70 border border-slate-700 rounded-3xl px-8 py-6 text-center w-60">
+                                📹 <span class="block font-semibold text-xl mt-3">Câmeras e Alarmes</span>
+                                <span class="text-sm text-slate-400">Monitoramento 24h</span>
+                            </div>
+                            <div class="bg-slate-900/70 border border-slate-700 rounded-3xl px-8 py-6 text-center w-60">
+                                🔑 <span class="block font-semibold text-xl mt-3">Fechaduras Digitais</span>
+                                <span class="text-sm text-slate-400">Abertura por app</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                // Slide 6 - Conclusão
+                html: `
+                    <div class="max-w-4xl mx-auto text-center slide-container">
+                        <h2 class="text-6xl font-bold mb-8">O futuro já chegou</h2>
+                        <p class="text-3xl text-slate-300 max-w-xl mx-auto leading-tight">
+                            A Casa Inteligente não é mais ficção.<br>
+                            É a nova realidade que transforma o seu lar em um ambiente mais seguro, econômico e confortável.
+                        </p>
+                        
+                        <div class="mt-20 text-[#00a3e0] text-6xl font-light">🏠 → 🤖</div>
+                        
+                        <div class="mt-16">
+                            <p class="text-4xl font-medium">Obrigado pela atenção!</p>
+                            <p class="text-2xl text-slate-400 mt-6">Alguma pergunta?</p>
+                        </div>
+                        
+                        <div class="mt-16 text-xs uppercase tracking-widest text-slate-400 flex justify-center gap-8">
+                            <div>SESI • CURITIBA</div>
+                            <div>GUSTAVO, JACKSON, TALICE, MATHEUS FILLA e LUCAS • 2026</div>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        // ==================== MODAIS (POP-UPS) ====================
+        const techModals = [
+            {
+                title: "🌐 Internet das Coisas (IoT)",
+                description: `
+                    <p class="mb-4">A Internet das Coisas (IoT) conecta dispositivos cotidianos à internet, permitindo que eles se comuniquem e sejam controlados remotamente.</p>
+                    <p class="font-semibold mb-2">Exemplos na casa inteligente:</p>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li>Lâmpadas inteligentes</li>
+                        <li>Tomadas e sensores</li>
+                        <li>Portas e janelas com sensores</li>
+                        <li>Geladeiras e eletrodomésticos conectados</li>
+                    </ul>
+                `
+            },
+            {
+                title: "🤖 Inteligência Artificial",
+                description: `
+                    <p class="mb-4">A Inteligência Artificial aprende os hábitos da família e toma decisões automáticas para aumentar o conforto e reduzir o consumo de energia.</p>
+                    <p class="font-semibold mb-2">Funcionalidades principais:</p>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li>Ajuste automático de iluminação e temperatura</li>
+                        <li>Recomendação de cenários personalizados</li>
+                        <li>Detecção de padrões de uso</li>
+                        <li>Economia inteligente de energia</li>
+                    </ul>
+                `
+            },
+            {
+                title: "🗣️ Assistentes de Voz",
+                description: `
+                    <p class="mb-4">Controlam toda a casa por comando de voz, oferecendo praticidade e acessibilidade.</p>
+                    <p class="font-semibold mb-3">Principais assistentes:</p>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li>Amazon Alexa</li>
+                        <li>Google Assistant</li>
+                        <li>Apple Siri</li>
+                    </ul>
+                    <p class="mt-4 text-sm italic text-slate-400">"Alexa, boa noite" → apaga as luzes, fecha as cortinas e ativa o alarme.</p>
+                `
+            },
+            {
+                title: "📡 Protocolos de Comunicação",
+                description: `
+                    <p class="mb-4">São as linguagens que permitem que os dispositivos se comuniquem de forma eficiente e segura.</p>
+                    <div class="grid grid-cols-3 gap-4 mt-6">
+                        <div class="bg-slate-800 p-4 rounded-2xl text-center">
+                            <p class="font-semibold text-[#00a3e0]">Wi-Fi</p>
+                            <p class="text-xs text-slate-400 mt-1">Rápido</p>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-2xl text-center">
+                            <p class="font-semibold text-[#00a3e0]">Zigbee</p>
+                            <p class="text-xs text-slate-400 mt-1">Baixo consumo</p>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-2xl text-center">
+                            <p class="font-semibold text-[#00a3e0]">Z-Wave</p>
+                            <p class="text-xs text-slate-400 mt-1">Seguro e estável</p>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        function showTechModal(index) {
+            const modal = techModals[index];
+            
+            const modalHTML = `
+                <div id="techModal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[999] backdrop-blur-md">
+                    <div class="modal bg-slate-900 border border-slate-600 rounded-3xl max-w-md w-full mx-4 overflow-hidden shadow-2xl">
+                        <div class="px-8 py-7 border-b border-slate-700 flex items-center gap-5 bg-slate-950">
+                            <span class="text-5xl">${modal.title.split(' ')[0]}</span>
+                            <h3 class="text-2xl font-semibold">${modal.title.substring(2)}</h3>
+                        </div>
+                        
+                        <div class="p-8 text-slate-200 leading-relaxed">
+                            ${modal.description}
+                        </div>
+                        
+                        <div class="p-6 border-t border-slate-700 bg-slate-950 flex justify-end">
+                            <button onclick="closeTechModal()" 
+                                    class="px-10 py-3.5 bg-slate-800 hover:bg-red-600/80 hover:text-white font-medium rounded-2xl text-lg">
+                                Fechar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('techModal')?.remove();
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function closeTechModal() {
+            const modal = document.getElementById('techModal');
+            if (modal) {
+                modal.style.opacity = '0';
+                setTimeout(() => modal.remove(), 250);
+            }
+        }
+
+        // ==================== CONTROLE DE SLIDES ====================
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            if (index < 0 || index >= totalSlides) return;
+            
+            currentIndex = index;
+            const contentDiv = document.getElementById('slide-content');
+            
+            contentDiv.style.opacity = 0;
+            
+            setTimeout(() => {
+                contentDiv.innerHTML = slides[index].html;
+                
+                document.getElementById('current-slide').textContent = String(index + 1).padStart(1, '0');
+                document.getElementById('total-slides').textContent = totalSlides;
+                document.getElementById('progress-bar').style.width = `${((index + 1) / totalSlides) * 100}%`;
+                
+                contentDiv.style.opacity = 1;
+            }, 150);
+        }
+
+        function nextSlide() {
+            if (currentIndex < totalSlides - 1) showSlide(currentIndex + 1);
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) showSlide(currentIndex - 1);
+        }
+
+        // Fechar modal com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") closeTechModal();
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Inicialização
+        function initPresentation() {
+            showSlide(0);
+            console.log('%c✅ Apresentação Casa Inteligente carregada com sucesso!', 'color:#00a3e0; font-size:14px; font-weight:bold');
+        }
+
+        window.onload = initPresentation;
+    </script>
+</body>
+</html>
